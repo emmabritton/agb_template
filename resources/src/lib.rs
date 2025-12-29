@@ -6,13 +6,44 @@
 
 extern crate alloc;
 
-use agb::include_aseprite;
+#[cfg(test)]
+#[agb::entry]
+fn main(mut gba: agb::Gba) -> ! {
+    loop {}
+}
+
+use agb::{include_aseprite, include_background_gfx};
 
 include_aseprite!(
     pub mod sprites,
-    "gfx/tst.aseprite",
+    "gfx/font.aseprite",
+);
+
+include_background_gfx!(
+    pub mod bg,
+    main => deduplicate "gfx/bg.aseprite",
 );
 
 pub mod prelude {
+    pub use crate::bg;
+    pub use crate::bg_idx;
     pub use crate::sprites;
+}
+
+pub mod bg_idx {
+    pub const BLACK: usize = 0;
+    pub const WHITE: usize = 1;
+    pub const BROWN_DARK: usize = 8;
+    pub const BROWN_LIGHT: usize = 9;
+}
+
+//test with `cargo test --package resources`
+#[cfg(test)]
+mod test {
+    use agb::Gba;
+
+    #[test_case]
+    fn test_example_lib(_gba: &mut Gba) {
+        assert_eq!(2 + 2, 4);
+    }
 }

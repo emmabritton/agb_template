@@ -8,8 +8,8 @@ members = [
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
-authors = ["Emma Britton <emmabritton@pm.me>"]
-description = "GBA Game Project Template"
+authors = ["??? <???>"]
+description = "???"
 license-file = "LICENSE"
 repository = "https://github.com/emmabritton/?"
 readme = "README.md"

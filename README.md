@@ -6,7 +6,7 @@ A gba game?
 
 ## Player Usage
 
-Download gba file from [here](https://github.com/emmabritton/???/releases/latest) and run in an emulator (mGBA recommended)
+Download gba file from [here](https://github.com/???/???/releases/latest) and run in an emulator (mGBA recommended)
 
 ### Dev Usage
 
@@ -14,19 +14,20 @@ First follow instructions at https://agbrs.dev/book/setup/getting_started.html
 
 #### Run
 
-cargo run --package game
+`cargo run`
 
 (runs in mGBA)
 
 #### Test
 
-cargo test
+`cargo test --package game`
+`cargo test --package resources`
 
 (runs in mGBA)
 
 #### Make gba file
 
-agb-gbafix target/thumbv4t-none-eabi/release/??? -o ???.gba
+`agb-gbafix target/thumbv4t-none-eabi/release/??? -o ???.gba`
 
 ## Thanks/Tools
 
@@ -39,9 +40,3 @@ agb-gbafix target/thumbv4t-none-eabi/release/??? -o ???.gba
 - aseprite
   - https://www.aseprite.org/
   - Creating backgrounds and sprites
-- abyssbox
-  - https://choptop84.github.io/abyssbox-app/
-  - Creating music and sound effects
-- audacity
-  - https://www.audacityteam.org/
-  - Editing/encoding music
