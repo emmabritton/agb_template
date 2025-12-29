@@ -4,6 +4,8 @@
 #![cfg_attr(test, reexport_test_harness_main = "test_main")]
 #![cfg_attr(test, test_runner(agb::test_runner::test_runner))]
 
+extern crate alloc;
+
 use agb::include_aseprite;
 
 include_aseprite!(

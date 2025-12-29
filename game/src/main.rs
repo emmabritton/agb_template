@@ -11,6 +11,8 @@ use agb::input::ButtonController;
 use agb::sound::mixer::{Frequency, Mixer};
 use resources::prelude::*;
 
+extern crate alloc;
+
 #[agb::entry]
 fn main(mut gba: agb::Gba) -> ! {
     gba.save.init_sram();
