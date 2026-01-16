@@ -6,6 +6,9 @@
 
 mod printer;
 mod rng;
+mod highlight;
+mod sound_controller;
+mod gfx;
 
 use crate::printer::VariWidthType;
 use agb::display::tiled::{RegularBackground, RegularBackgroundSize, TileFormat, VRAM_MANAGER};
@@ -15,12 +18,14 @@ use agb::input::ButtonController;
 use agb::sound::mixer::{Frequency, Mixer};
 use resources::bg;
 use resources::prelude::*;
+use crate::sound_controller::SoundController;
 
 extern crate alloc;
 
 #[cfg(all(feature = "sram", feature = "flash64"))]
 compile_error!("Features `sram` and `flash64` are mutually exclusive. Enable only one.");
 
+const TILE_SIZE: i32 = 8;
 
 #[agb::entry]
 fn main(mut gba: agb::Gba) -> ! {
@@ -29,7 +34,7 @@ fn main(mut gba: agb::Gba) -> ! {
 
     #[cfg(feature = "flash64")]
     gba.save.init_flash_64k();
-    
+
     let mixer = gba.mixer.mixer(Frequency::Hz18157);
     let gfx = gba.graphics.get();
     let button_controller = ButtonController::new();
@@ -37,8 +42,10 @@ fn main(mut gba: agb::Gba) -> ! {
     run(mixer, gfx, button_controller)
 }
 
-fn run(mut mixer: Mixer, mut gfx: Graphics, mut button_controller: ButtonController) -> ! {
+fn run(mixer: Mixer, mut gfx: Graphics, mut button_controller: ButtonController) -> ! {
     VRAM_MANAGER.set_background_palettes(bg::PALETTES);
+
+    let mut sound_controller = SoundController::new(true, true, mixer);
 
     let mut background = RegularBackground::new(
         Priority::P0,
@@ -68,7 +75,7 @@ fn run(mut mixer: Mixer, mut gfx: Graphics, mut button_controller: ButtonControl
         text.show(vec2(16, 16), &mut frame);
         //end example
 
-        mixer.frame();
+        sound_controller.frame();
         frame.commit();
     }
 }
