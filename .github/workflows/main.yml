@@ -32,6 +32,15 @@ jobs:
     needs: check
     name: Build and Release
     runs-on: macOS-latest
+    strategy:
+      matrix:
+        mode:
+          - name: sram
+            cargo_params: ""
+            filename: sram
+          - name: f64
+            cargo_params: --no-default-features --features=flash64
+            filename: flash64
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -41,15 +50,20 @@ jobs:
       - name: setup
         run: |
           cargo install agb-gbafix
+          cargo install gbafix 
 
       - name: build
-        run: cargo build --release
+        run: cargo build --release ${{ matrix.mode.cargo_params}}
 
       - name: build gba
-        run: agb-gbafix target/thumbv4t-none-eabi/release/??? -o ???.gba -t??? -c??? -mEB -r010
+        run: agb-gbafix target/thumbv4t-none-eabi/release/??? -o ???_v??_${{ matrix.mode.filename}}.gba -t????????? -c???? -m?? -r??
+
+        #remove this once agb-gbafix is updated
+      - name: fix gba file
+        run: gbafix ???_v??_${{ matrix.mode.filename}}.gba -t????????? -c???? -m?? -r??
 
       - uses: softprops/action-gh-release@v1
         with:
-          files: ???.gba
+          files: ???_v??_${{ matrix.mode.filename}}.gba
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

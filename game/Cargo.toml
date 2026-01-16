@@ -8,3 +8,8 @@ edition.workspace = true
 [dependencies]
 agb.workspace = true
 resources = { path = "../resources" }
+
+[features]
+default = ["sram"]
+sram = []
+flash64 = []
