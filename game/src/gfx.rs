@@ -93,30 +93,3 @@ fn draw_corner(
         .set_pos(at)
         .show(graphics);
 }
-
-/// Create a 240x160 background
-pub fn background(data: &'static TileData, priority: Priority) -> RegularBackground {
-    let mut background = RegularBackground::new(
-        priority,
-        RegularBackgroundSize::Background32x32,
-        TileFormat::FourBpp,
-    );
-
-    background.fill_with(data);
-
-    background
-}
-
-/// Create stack of 240x160 backgrounds
-/// 
-/// Background first
-/// then extras
-/// then ui
-pub fn background_stack<const N: usize>(layers: [&'static TileData; N]) -> [RegularBackground; N] {
-    assert!(N > 0, "at least 1 background required");
-    assert!(N <= 4, "max 4 layers");
-
-    let priorities = [Priority::P3, Priority::P2, Priority::P1, Priority::P0];
-
-    core::array::from_fn(|i| background(layers[i], priorities[i]))
-}

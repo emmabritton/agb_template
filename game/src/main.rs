@@ -9,15 +9,18 @@ mod rng;
 mod highlight;
 mod sound_controller;
 mod gfx;
+mod save_controller;
 
 use crate::printer::VariWidthType;
 use agb::display::tiled::{RegularBackground, RegularBackgroundSize, TileFormat, VRAM_MANAGER};
 use agb::display::{Graphics, Priority};
+use agb::eprintln;
 use agb::fixnum::vec2;
 use agb::input::ButtonController;
 use agb::sound::mixer::{Frequency, Mixer};
 use resources::bg;
 use resources::prelude::*;
+use crate::save_controller::SaveController;
 use crate::sound_controller::SoundController;
 
 extern crate alloc;
@@ -25,27 +28,43 @@ extern crate alloc;
 #[cfg(all(feature = "sram", feature = "flash64"))]
 compile_error!("Features `sram` and `flash64` are mutually exclusive. Enable only one.");
 
+const SAVE_MAGIC: [u8; 32] = *b"????????????????????????????????";
+
 const TILE_SIZE: i32 = 8;
 
 #[agb::entry]
 fn main(mut gba: agb::Gba) -> ! {
     #[cfg(feature = "sram")]
-    gba.save.init_sram();
+    let save_controller = match gba.save.init_sram(1, SAVE_MAGIC) {
+        Ok(save_manager) => SaveController::new(save_manager),
+        Err(e) => {
+            eprintln!("Error init'ing save manager: {e:?}");
+            SaveController::new_broken()
+        }
+    };
 
     #[cfg(feature = "flash64")]
-    gba.save.init_flash_64k();
+    let save_controller = match gba.save.init_flash_64k(1, crate::SAVE_MAGIC) {
+        Ok(save_manager) => SaveController::new(save_manager),
+        Err(e) => {
+            eprintln!("Error init'ing save manager: {e:?}");
+            SaveController::new_broken()
+        }
+    };
 
     let mixer = gba.mixer.mixer(Frequency::Hz18157);
     let gfx = gba.graphics.get();
     let button_controller = ButtonController::new();
 
-    run(mixer, gfx, button_controller)
+    run(mixer, gfx, button_controller, save_controller);
 }
 
-fn run(mixer: Mixer, mut gfx: Graphics, mut button_controller: ButtonController) -> ! {
+fn run(mixer: Mixer, mut gfx: Graphics, mut button_controller: ButtonController, save_controller: SaveController) -> ! {
     VRAM_MANAGER.set_background_palettes(bg::PALETTES);
 
-    let mut sound_controller = SoundController::new(true, true, mixer);
+    let settings = save_controller.settings();
+    let mut sound_controller =
+        SoundController::new(settings.sfx_volume, settings.bgm_volume, mixer);
 
     let mut background = RegularBackground::new(
         Priority::P0,

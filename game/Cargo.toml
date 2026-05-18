@@ -7,6 +7,10 @@ edition.workspace = true
 
 [dependencies]
 agb.workspace = true
+agb_eb_ext.workspace = true
+arrayvec.workspace = true
+gba_agb_font_renderer.workspace = true
+serde.workspace = true
 resources = { path = "../resources" }
 
 [features]

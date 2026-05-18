@@ -1,15 +1,33 @@
+use agb::fixnum::{num, Num};
 use agb::sound::mixer::{ChannelId, Mixer, SoundChannel};
+
+const VOL_OFF: usize = 0;
+
+static VOLUMES: [Num<i16, 8>; 7] = [
+    num!(0.0),
+    num!(0.25),
+    num!(0.5),
+    num!(0.75),
+    num!(1.0),
+    num!(1.5),
+    num!(2.0),
+];
 
 pub struct SoundController<'gba> {
     mixer: Mixer<'gba>,
     bgm: Option<(Bgm, ChannelId)>,
-    sfx_enabled: bool,
-    bgm_enabled: bool,
+    sfx_volume: usize,
+    bgm_volume: usize,
 }
 
-impl <'gba> SoundController<'gba> {
-    pub fn new(bgm_enabled: bool, sfx_enabled: bool, mixer: Mixer<'gba>) -> Self {
-        Self { mixer, bgm: None, sfx_enabled, bgm_enabled }
+impl<'gba> SoundController<'gba> {
+    pub fn new(sfx_vol: u8, bgm_vol: u8, mixer: Mixer<'gba>) -> Self {
+        Self {
+            mixer,
+            bgm: None,
+            sfx_volume: sfx_vol as usize,
+            bgm_volume: bgm_vol as usize,
+        }
     }
 }
 
@@ -17,18 +35,18 @@ impl <'gba> SoundController<'gba> {
     pub fn frame(&mut self) {
         self.mixer.frame();
     }
-    
-    pub fn update_settings(&mut self, sfx_enabled: bool, bgm_enabled: bool) {
-        self.sfx_enabled = sfx_enabled;
-        self.bgm_enabled = bgm_enabled;
 
-        if !self.bgm_enabled {
+    pub fn update_settings(&mut self, sfx_vol: u8, bgm_vol: u8) {
+        self.sfx_volume = sfx_vol as usize;
+        self.bgm_volume = bgm_vol as usize;
+
+        if self.bgm_volume == VOL_OFF {
             self.stop_bgm();
         }
     }
 
     pub fn play_sfx(&mut self, effect: SoundEffect) {
-        if !self.sfx_enabled {
+        if self.sfx_volume == VOL_OFF {
             return;
         }
 
@@ -53,7 +71,7 @@ impl <'gba> SoundController<'gba> {
     }
 
     pub fn play_bgm(&mut self, track: Bgm) {
-        if !self.bgm_enabled {
+        if self.bgm_volume == VOL_OFF {
             return;
         }
 

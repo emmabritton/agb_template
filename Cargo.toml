@@ -18,7 +18,14 @@ categories = ["games"]
 publish = false
 
 [workspace.dependencies]
-agb = "0.22.6"
+agb = "0.23.1"
+agb_eb_ext = {path = "../agb_ext"}
+gba_agb_font_eb = "0.6.0"
+gba_agb_font_renderer = "0.6.0"
+gba_agb_font_loader = "0.6.0"
+
+arrayvec = { version = "0.7.6", default-features = false }
+serde = { version = "1.0.228", default-features = false, features = ["derive"]}
 
 [profile.dev]
 opt-level = 3
