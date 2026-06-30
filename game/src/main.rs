@@ -12,7 +12,7 @@ mod gfx;
 mod save_controller;
 
 use crate::printer::VariWidthType;
-use agb::display::tiled::{RegularBackground, RegularBackgroundSize, TileFormat, VRAM_MANAGER};
+use agb::display::tiled::{RegularBackground, RegularBackgroundSize, TileFormat};
 use agb::display::{Graphics, Priority};
 use agb::eprintln;
 use agb::fixnum::vec2;
@@ -60,7 +60,7 @@ fn main(mut gba: agb::Gba) -> ! {
 }
 
 fn run(mixer: Mixer, mut gfx: Graphics, mut button_controller: ButtonController, save_controller: SaveController) -> ! {
-    VRAM_MANAGER.set_background_palettes(bg::PALETTES);
+    gfx.set_background_palettes(bg::PALETTES);
 
     let settings = save_controller.settings();
     let mut sound_controller =

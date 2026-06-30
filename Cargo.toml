@@ -18,7 +18,7 @@ categories = ["games"]
 publish = false
 
 [workspace.dependencies]
-agb = "0.23.1"
+agb = "0.24.0"
 agb_eb_ext = {path = "../agb_ext"}
 gba_agb_font_eb = "0.6.0"
 gba_agb_font_renderer = "0.6.0"
